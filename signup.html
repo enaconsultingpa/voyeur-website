@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Join — Voyeur</title>
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400;1,500;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#121216;
+    --panel:#1c1c22;
+    --panel-2:#232329;
+    --lilac:#b9a9e0;
+    --sky:#a8c8e0;
+    --fog:#8f8f99;
+    --paper:#f1f0f4;
+    --border:rgba(241,240,244,0.08);
+    --border-strong:rgba(241,240,244,0.16);
+    --error:#e08a8a;
+    --success:#9ed6a8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;min-height:100vh;
+    background:var(--ink);color:var(--paper);
+    font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;
+    display:flex;align-items:center;justify-content:center;padding:24px;
+  }
+  h1{font-family:'Fraunces',serif;font-weight:500;font-style:italic;margin:0 0 8px;font-size:clamp(28px,4vw,36px);}
+  .wrap{width:100%;max-width:420px;}
+  .logo-row{display:flex;justify-content:center;margin-bottom:28px;}
+  .logo-row img{height:34px;width:auto;}
+  .card{
+    background:var(--panel);border:1px solid var(--border);border-radius:16px;
+    padding:36px 32px;
+  }
+  p.sub{color:var(--fog);font-size:14px;margin:0 0 28px;line-height:1.6;}
+  label{display:block;font-size:12px;color:var(--fog);margin-bottom:6px;}
+  input{
+    width:100%;padding:12px 14px;border-radius:8px;
+    border:1px solid var(--border-strong);background:var(--panel-2);
+    color:var(--paper);font-size:15px;margin-bottom:18px;font-family:inherit;
+  }
+  input:focus{outline:none;border-color:var(--lilac);}
+  button{
+    width:100%;padding:13px;border-radius:8px;border:none;
+    background:var(--lilac);color:var(--ink);font-weight:600;font-size:15px;
+    cursor:pointer;font-family:inherit;
+  }
+  button:disabled{opacity:0.5;cursor:default;}
+  .error-text{color:var(--error);font-size:13px;margin:-8px 0 16px;display:none;}
+  .success-box{display:none;text-align:center;}
+  .success-box p{color:var(--fog);font-size:14px;line-height:1.7;margin-bottom:22px;}
+  .success-box a{
+    display:inline-block;padding:13px 24px;border-radius:8px;
+    background:var(--lilac);color:var(--ink);font-weight:600;text-decoration:none;font-size:15px;
+  }
+  .back-link{display:block;text-align:center;margin-top:22px;color:var(--fog);font-size:13px;text-decoration:none;}
+  .back-link:hover{color:var(--paper);}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="logo-row"><img src="assets/wordmark.png" alt="Voyeur"></div>
+
+  <div class="card">
+    <div id="formView">
+      <h1>Join the list.</h1>
+      <p class="sub">Create your member account for priority entry, event access, and your own photo page.</p>
+
+      <form id="signupForm" novalidate>
+        <label for="suName">Full name</label>
+        <input type="text" id="suName" placeholder="Jordan Lee" autocomplete="name">
+
+        <label for="suEmail">Email</label>
+        <input type="email" id="suEmail" placeholder="you@example.com" autocomplete="email">
+
+        <label for="suPhone">Phone number</label>
+        <input type="tel" id="suPhone" placeholder="(555) 555-5555" autocomplete="tel">
+
+        <label for="suPassword">Password</label>
+        <input type="password" id="suPassword" placeholder="At least 8 characters" autocomplete="new-password">
+
+        <p class="error-text" id="suError"></p>
+        <button type="submit" id="suSubmit">Create account</button>
+      </form>
+    </div>
+
+    <div class="success-box" id="successView">
+      <h1>You're in.</h1>
+      <p>Your account's ready. Log in anytime to see upcoming events and your photos.</p>
+      <a href="https://voyeur.netlify.app" target="_blank" rel="noopener">Log in now</a>
+    </div>
+  </div>
+
+  <a class='back-link' href='/'>← Back to site</a>
+</div>
+
+<script>
+  var SUPABASE_URL      = 'https://lmopfcntexvepdzijdmu.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxtb3BmY250ZXh2ZXBkemlqZG11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5NDkxODMsImV4cCI6MjEwMzUyNTE4M30.vvjJLkn3zGyoSp6FyTIcBF0FCZTzLnFUhcnmi-8IHl0';
+
+  var form = document.getElementById('signupForm');
+  var errorEl = document.getElementById('suError');
+  var submitBtn = document.getElementById('suSubmit');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = document.getElementById('suName').value.trim();
+    var email = document.getElementById('suEmail').value.trim();
+    var phone = document.getElementById('suPhone').value.trim();
+    var password = document.getElementById('suPassword').value;
+
+    if(!name || !email || !phone || !password){
+      errorEl.textContent = 'Please fill in every field.';
+      errorEl.style.display = 'block';
+      return;
+    }
+    if(password.length < 8){
+      errorEl.textContent = 'Password must be at least 8 characters.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    errorEl.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creating account…';
+
+    fetch(SUPABASE_URL + '/functions/v1/public-signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: 'Bearer ' + SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify({ name: name, email: email, phone: phone, password: password })
+    })
+      .then(function(r){ return r.json().then(function(body){ return { ok: r.ok, body: body }; }); })
+      .then(function(res){
+        if(!res.ok){
+          errorEl.textContent = res.body.error || 'Something went wrong. Please try again.';
+          errorEl.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create account';
+          return;
+        }
+        document.getElementById('formView').style.display = 'none';
+        document.getElementById('successView').style.display = 'block';
+      })
+      .catch(function(){
+        errorEl.textContent = 'Could not reach the server. Check your connection and try again.';
+        errorEl.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create account';
+      });
+  });
+</script>
+
+</body>
+</html>
