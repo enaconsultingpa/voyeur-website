@@ -9,7 +9,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400;1,500;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
+  :root{--border-strong:rgba(241,240,244,0.16);
+--gradient-primary:linear-gradient(135deg, #9333ea, #d6409f);
+--accent-bar:#c026d3;
     --ink:#121216;
     --panel:#1c1c22;
     --panel-2:#232329;
@@ -18,13 +20,12 @@
     --fog:#8f8f99;
     --paper:#f1f0f4;
     --border:rgba(241,240,244,0.08);
-    --border-strong:rgba(241,240,244,0.16);
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
     margin:0;
-    background:var(--ink);
+    background:radial-gradient(circle at 20% 0%, #2a1f3d 0%, var(--ink) 60%);
     color:var(--paper);
     font-family:'Inter',sans-serif;
     -webkit-font-smoothing:antialiased;
