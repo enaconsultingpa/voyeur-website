@@ -34,7 +34,7 @@
   h1{font-family:'Fraunces',serif;font-weight:500;margin:0 0 8px;font-size:clamp(28px,4vw,36px);}
   .wrap{width:100%;max-width:420px;}
   .logo-row{display:flex;justify-content:center;margin-bottom:28px;}
-  .logo-row img{height:80px;width:auto;}
+  .logo-row img{height:34px;width:auto;}
   .card{
     background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent-bar);border-radius:16px;
     padding:36px 32px;
@@ -73,20 +73,20 @@
 
   <div class="card">
     <div id="formView">
-      <h1>Join the list.</h1>
-      <p class="sub">Create your member account for priority entry, event access, and your own photo page.</p>
+      <h1 id="suHeading">Join the list.</h1>
+      <p class="sub" id="suSubtext">Create your member account for priority entry, event access, and your own photo page.</p>
 
       <form id="signupForm" novalidate>
-        <label for="suName">Full name</label>
+        <label for="suName" id="suNameLabel">Full name</label>
         <input type="text" id="suName" placeholder="Jordan Lee" autocomplete="name">
 
-        <label for="suEmail">Email</label>
+        <label for="suEmail" id="suEmailLabel">Email</label>
         <input type="email" id="suEmail" placeholder="you@example.com" autocomplete="email">
 
-        <label for="suPhone">Phone number</label>
+        <label for="suPhone" id="suPhoneLabel">Phone number</label>
         <input type="tel" id="suPhone" placeholder="(555) 555-5555" autocomplete="tel">
 
-        <label for="suPassword">Password</label>
+        <label for="suPassword" id="suPasswordLabel">Password</label>
         <input type="password" id="suPassword" placeholder="At least 8 characters" autocomplete="new-password">
 
         <p class="error-text" id="suError"></p>
@@ -95,18 +95,79 @@
     </div>
 
     <div class="success-box" id="successView">
-      <h1>You're in.</h1>
-      <p>Your account's ready. Log in anytime to see upcoming events and your photos.</p>
-      <a href="https://voyeur.netlify.app" target="_blank" rel="noopener">Log in now</a>
+      <h1 id="suSuccessHeading">You're in.</h1>
+      <p id="suSuccessText">Your account's ready. Log in anytime to see upcoming events and your photos.</p>
+      <a href="https://voyeur.netlify.app" target="_blank" rel="noopener" id="suSuccessLink">Log in now</a>
     </div>
   </div>
 
-  <a class='back-link' href='/'>← Back to site</a>
+  <a class='back-link' href='/' id="suBackLink">← Back to site</a>
 </div>
 
 <script>
   var SUPABASE_URL      = 'https://lmopfcntexvepdzijdmu.supabase.co';
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxtb3BmY250ZXh2ZXBkemlqZG11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5NDkxODMsImV4cCI6MjEwMzUyNTE4M30.vvjJLkn3zGyoSp6FyTIcBF0FCZTzLnFUhcnmi-8IHl0';
+
+  var DEFAULTS = {
+    signup_heading: 'Join the list.',
+    signup_subtext: 'Create your member account for priority entry, event access, and your own photo page.',
+    signup_name_label: 'Full name',
+    signup_name_placeholder: 'Jordan Lee',
+    signup_email_label: 'Email',
+    signup_email_placeholder: 'you@example.com',
+    signup_phone_label: 'Phone number',
+    signup_phone_placeholder: '(555) 555-5555',
+    signup_password_label: 'Password',
+    signup_password_placeholder: 'At least 8 characters',
+    signup_button_label: 'Create account',
+    signup_button_loading_label: 'Creating account…',
+    signup_success_heading: "You're in.",
+    signup_success_text: "Your account's ready. Log in anytime to see upcoming events and your photos.",
+    signup_success_button_label: 'Log in now',
+    signup_back_link_label: '← Back to site'
+  };
+
+  var LOADING_LABEL = DEFAULTS.signup_button_loading_label;
+  var SUBMIT_LABEL = DEFAULTS.signup_button_label;
+
+  function applyContent(content){
+    document.getElementById('suHeading').textContent = content.signup_heading;
+    document.getElementById('suSubtext').textContent = content.signup_subtext;
+    document.getElementById('suNameLabel').textContent = content.signup_name_label;
+    document.getElementById('suName').placeholder = content.signup_name_placeholder;
+    document.getElementById('suEmailLabel').textContent = content.signup_email_label;
+    document.getElementById('suEmail').placeholder = content.signup_email_placeholder;
+    document.getElementById('suPhoneLabel').textContent = content.signup_phone_label;
+    document.getElementById('suPhone').placeholder = content.signup_phone_placeholder;
+    document.getElementById('suPasswordLabel').textContent = content.signup_password_label;
+    document.getElementById('suPassword').placeholder = content.signup_password_placeholder;
+    document.getElementById('suSubmit').textContent = content.signup_button_label;
+    document.getElementById('suSuccessHeading').textContent = content.signup_success_heading;
+    document.getElementById('suSuccessText').textContent = content.signup_success_text;
+    document.getElementById('suSuccessLink').textContent = content.signup_success_button_label;
+    document.getElementById('suBackLink').textContent = content.signup_back_link_label;
+    LOADING_LABEL = content.signup_button_loading_label;
+    SUBMIT_LABEL = content.signup_button_label;
+  }
+
+  var signupKeys = Object.keys(DEFAULTS).join(',');
+  fetch(SUPABASE_URL + '/rest/v1/site_content?select=key,value&key=in.(' + signupKeys + ')', {
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: 'Bearer ' + SUPABASE_ANON_KEY
+    }
+  })
+    .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+    .then(function(rows){
+      var content = Object.assign({}, DEFAULTS);
+      rows.forEach(function(row){
+        if(row.value) content[row.key] = row.value;
+      });
+      applyContent(content);
+    })
+    .catch(function(){
+      applyContent(DEFAULTS);
+    });
 
   var form = document.getElementById('signupForm');
   var errorEl = document.getElementById('suError');
@@ -132,7 +193,7 @@
 
     errorEl.style.display = 'none';
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Creating account…';
+    submitBtn.textContent = LOADING_LABEL;
 
     fetch(SUPABASE_URL + '/functions/v1/public-signup', {
       method: 'POST',
@@ -149,7 +210,7 @@
           errorEl.textContent = res.body.error || 'Something went wrong. Please try again.';
           errorEl.style.display = 'block';
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Create account';
+          submitBtn.textContent = SUBMIT_LABEL;
           return;
         }
         document.getElementById('formView').style.display = 'none';
@@ -159,7 +220,7 @@
         errorEl.textContent = 'Could not reach the server. Check your connection and try again.';
         errorEl.style.display = 'block';
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Create account';
+        submitBtn.textContent = SUBMIT_LABEL;
       });
   });
 </script>
