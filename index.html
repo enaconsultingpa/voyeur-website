@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400;1,500;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#14111c;
@@ -28,20 +28,50 @@
     margin:0;
     background:radial-gradient(circle at 20% 0%, #2a1f3d 0%, var(--ink) 60%);
     color:var(--paper);
-    font-family:'Inter',sans-serif;
+    font-family:'Montserrat',sans-serif;
     -webkit-font-smoothing:antialiased;
   }
+
+  /* AMBIENT BACKGROUND — soft, slow ambient glow (no grid/cursor effects) */
+  .bg-ambient{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;}
+  .bg-ambient .orb{position:absolute;border-radius:50%;filter:blur(140px);}
+  .bg-ambient .orb-1{width:620px;height:620px;background:var(--lilac);opacity:0.14;top:-220px;left:-160px;}
+  .bg-ambient .orb-2{width:560px;height:560px;background:var(--sky);opacity:0.11;bottom:-220px;right:-160px;}
+  @media (prefers-reduced-motion: no-preference){
+    .bg-ambient .orb-1{animation:driftA 48s ease-in-out infinite;}
+    .bg-ambient .orb-2{animation:driftB 54s ease-in-out infinite;}
+  }
+  @keyframes driftA{0%,100%{transform:translate(0,0);}50%{transform:translate(40px,30px);}}
+  @keyframes driftB{0%,100%{transform:translate(0,0);}50%{transform:translate(-36px,-24px);}}
+
+  /* GLASS CARD — gradient-hairline border + soft elevation */
+  .glass{
+    position:relative;
+    background:linear-gradient(160deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012));
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    box-shadow:0 20px 50px -20px rgba(0,0,0,0.55);
+  }
+  .glass::before{
+    content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;
+    background:linear-gradient(135deg, rgba(185,169,224,0.55), rgba(168,200,224,0.12) 45%, rgba(185,169,224,0.4));
+    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;
+  }
   h1,h2,h3{
-    font-family:'Fraunces',serif;
+    font-family:'Cormorant Garamond',serif;
     font-weight:500;
     margin:0;
   }
   .eyebrow{
     font-size:12px;
     text-transform:uppercase;
-    letter-spacing:0.18em;
-    color:var(--fog);
-    font-weight:500;
+    letter-spacing:0.22em;
+    color:var(--sky);
+    font-weight:600;
+  }
+  @media (prefers-reduced-motion: no-preference){
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease, transform .7s ease;}
+    .reveal.in{opacity:1;transform:translateY(0);}
   }
   a{color:inherit;text-decoration:none;}
   .wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
@@ -54,7 +84,8 @@
   /* NAV */
   nav{
     position:fixed;top:0;left:0;right:0;z-index:100;
-    background:rgba(14,13,18,0.94);
+    background:rgba(20,17,28,0.82);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
     border-bottom:1px solid var(--border);
   }
   .nav-inner{
@@ -62,7 +93,7 @@
     display:flex;align-items:center;justify-content:space-between;
   }
   .logo{
-    font-family:'Fraunces',serif;font-style:italic;font-size:22px;
+    font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;
     letter-spacing:0.02em;display:flex;align-items:center;
   }
   .logo img{height:76px;width:auto;display:block;}
@@ -73,7 +104,7 @@
     border:1px solid var(--border-strong);padding:9px 18px;border-radius:100px;
     font-size:13px;color:var(--paper) !important;
   }
-  .nav-cta:hover{border-color:var(--lilac);background:rgba(185,169,224,0.08);}
+  .nav-cta:hover{border-color:var(--sky);background:rgba(185,169,224,0.08);}
   .menu-btn{
     display:none;background:none;border:none;color:var(--paper);cursor:pointer;
     width:36px;height:36px;align-items:center;justify-content:center;padding:0;
@@ -115,8 +146,8 @@
   /* HERO */
   .hero{
     position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;
-    padding-top:88px;overflow:hidden;
-    background-image:linear-gradient(180deg, rgba(10,8,20,0.25), rgba(10,8,20,0.6)), url('https://lmopfcntexvepdzijdmu.supabase.co/storage/v1/object/public/gallery-photos/site/hero-bg.jpg');
+    padding-top:168px;padding-bottom:64px;overflow:hidden;
+    background-image:radial-gradient(ellipse at 50% 30%, rgba(147,51,234,0.16), transparent 60%), linear-gradient(180deg, rgba(10,6,7,0.35), rgba(10,6,7,0.72)), url('https://lmopfcntexvepdzijdmu.supabase.co/storage/v1/object/public/gallery-photos/site/hero-bg.jpg');
     background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
@@ -130,26 +161,84 @@
   }
   .hero-content{position:relative;z-index:2;max-width:680px;margin:0 auto;text-align:center;}
   .hero-wordmark{width:min(560px,80vw);height:auto;margin:0 auto 20px;display:block;}
-  .hero h1{font-size:clamp(42px,7vw,76px);line-height:1.05;}
-  .hero h1 span{color:var(--lilac);}
+  .hero h1{font-size:clamp(42px,7vw,76px);line-height:1.05;font-style:italic;}
+  .hero h1 span{color:var(--lilac);font-style:normal;}
   .hero p{font-size:17px;color:var(--fog);max-width:460px;margin:24px auto 36px;line-height:1.7;}
+  .hero-divider{width:64px;height:1px;margin:22px auto 0;background:linear-gradient(90deg,transparent,var(--sky),transparent);}
+
+  /* ALLURE / VALUE PROPS */
+  #allure{padding-top:88px;padding-bottom:88px;}
+  .allure-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  @media(max-width:800px){.allure-grid{grid-template-columns:1fr;}}
+  .allure-card{
+    border-radius:16px;padding:34px 28px;transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .allure-card:hover{transform:translateY(-6px);box-shadow:0 28px 60px -20px rgba(122,90,220,0.35);}
+  .allure-icon{
+    width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:rgba(185,169,224,0.10);border:1px solid var(--border-strong);margin-bottom:20px;
+    box-shadow:0 0 24px rgba(185,169,224,0.15);
+  }
+  .allure-icon svg{width:20px;height:20px;stroke:var(--sky);}
+  .allure-card h3{font-size:22px;font-style:italic;margin-bottom:10px;}
+  .allure-card p{font-size:14px;color:var(--fog);line-height:1.75;margin:0;}
+
+  /* MANIFESTO STRIP */
+  #manifesto{padding:0 0 100px;text-align:center;}
+  #manifesto blockquote{
+    font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;
+    font-size:clamp(24px,3.2vw,34px);line-height:1.5;max-width:760px;margin:0 auto;
+    color:var(--paper);
+  }
+  #manifesto blockquote span{color:var(--lilac);font-style:normal;}
+  #manifesto cite{display:block;margin-top:18px;font-style:normal;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--fog);}
   .btn-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+
+  /* ORNAMENT DIVIDER */
+  .ornament{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px;}
+  .ornament::before,.ornament::after{content:'';width:36px;height:1px;background:linear-gradient(90deg,transparent,var(--border-strong));}
+  .ornament::after{background:linear-gradient(90deg,var(--border-strong),transparent);}
+  .ornament span{width:6px;height:6px;border:1px solid var(--sky);transform:rotate(45deg);display:block;}
+
+  /* EXPERIENCE STEPS */
+  #experience{background:linear-gradient(180deg, rgba(30,26,38,0.5), rgba(30,26,38,0.5));border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+  .steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;}
+  @media(max-width:900px){.steps-grid{grid-template-columns:repeat(2,1fr);gap:36px;}}
+  @media(max-width:520px){.steps-grid{grid-template-columns:1fr;}}
+  .step{position:relative;padding:0 24px 0 0;}
+  .step:not(:last-child)::after{
+    content:'';position:absolute;top:18px;right:0;width:24px;height:1px;background:var(--border-strong);
+  }
+  @media(max-width:900px){.step:not(:last-child)::after{display:none;}}
+  .step-num{
+    font-family:'Cormorant Garamond',serif;font-style:italic;font-size:48px;line-height:1;
+    background:linear-gradient(135deg,var(--lilac),var(--sky));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    margin-bottom:14px;display:block;
+  }
+  .step h3{font-size:19px;font-style:italic;margin-bottom:8px;}
+  .step p{font-size:13.5px;color:var(--fog);line-height:1.7;margin:0;}
+
+  /* CLOSING CTA */
+  #final-cta{position:relative;text-align:center;overflow:hidden;background:var(--ink);}
+  #final-cta .bloom-1, #final-cta .bloom-2{opacity:0.4;}
+  #final-cta .wrap{position:relative;z-index:1;max-width:640px;}
+  #final-cta .btn{margin-top:24px;}
   .btn{
     padding:13px 26px;border-radius:100px;font-size:14px;font-weight:500;
     display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:1px solid transparent;
     transition:transform .15s ease, background .2s ease, border-color .2s ease;
   }
   .btn:active{transform:scale(0.97);}
-  .btn-primary{background:var(--gradient-primary);color:#fff;box-shadow:0 4px 14px rgba(190,60,190,0.35);}
-  .btn-primary:hover{filter:brightness(1.1);}
+  .btn-primary{background:var(--gradient-primary);color:#fff;box-shadow:0 4px 20px rgba(190,60,190,0.35);}
+  .btn-primary:hover{filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 6px 26px rgba(147,51,234,0.5);}
   .btn-outline{border-color:var(--border-strong);color:var(--paper);}
-  .btn-outline:hover{border-color:var(--sky);background:rgba(168,200,224,0.08);}
+  .btn-outline:hover{border-color:var(--sky);background:rgba(185,169,224,0.08);}
 
   /* aperture graphic */
   @media(max-width:900px){.iris{display:none;}}
 
   @media(max-width:640px){
-    .hero{padding-top:70px;}
+    .hero{padding-top:136px;}
     .hero-wordmark{width:min(320px,72vw);margin-bottom:16px;}
     .hero h1{font-size:clamp(32px,9vw,42px);}
     .hero p{font-size:15px;margin:18px 0 28px;}
@@ -163,14 +252,16 @@
   .section-head p{color:var(--fog);margin-top:14px;line-height:1.7;font-size:15px;}
 
   /* EVENTS */
-  #events{background:var(--panel);}
+  #events{background:linear-gradient(180deg, rgba(30,26,38,0.5), rgba(30,26,38,0.5));border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
   .event-list{display:flex;flex-direction:column;}
   .event-row{
     display:grid;grid-template-columns:120px 1fr auto;gap:28px;align-items:center;
-    padding:26px 24px;border-radius:12px;background:var(--panel-2);border-left:3px solid var(--accent-bar);margin-bottom:12px;
+    padding:26px 24px;border-radius:12px;border-left:3px solid var(--accent-bar);margin-bottom:12px;
+    transition:transform .25s ease, box-shadow .25s ease;
   }
-  .event-date{font-family:'Fraunces',serif;font-style:italic;font-size:20px;color:var(--sky);}
-  .event-date small{display:block;font-family:'Inter',sans-serif;font-style:normal;font-size:11px;letter-spacing:0.1em;color:var(--fog);text-transform:uppercase;margin-top:2px;}
+  .event-row:hover{transform:translateX(4px);box-shadow:0 16px 40px -18px rgba(122,90,220,0.4);}
+  .event-date{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:var(--sky);}
+  .event-date small{display:block;font-family:'Montserrat',sans-serif;font-style:normal;font-size:11px;letter-spacing:0.1em;color:var(--fog);text-transform:uppercase;margin-top:2px;}
   .event-title{font-size:17px;font-weight:500;}
   .event-sub{font-size:13px;color:var(--fog);margin-top:4px;}
   @media(max-width:640px){
@@ -187,22 +278,29 @@
   .gallery-item{
     position:relative;aspect-ratio:4/5;border-radius:14px;overflow:hidden;
     background:linear-gradient(160deg,var(--panel-2),var(--panel));
-    cursor:pointer;
+    border:1px solid var(--border);
+    cursor:pointer;transition:border-color .3s ease, transform .3s ease;
   }
+  .gallery-item:hover{border-color:var(--border-strong);transform:translateY(-3px);}
   .gallery-item .photo-fill{
     position:absolute;inset:0;
     background:linear-gradient(135deg,rgba(185,169,224,0.35),rgba(168,200,224,0.25));
+    transition:transform .5s ease;
   }
+  .gallery-item:hover .photo-fill{transform:scale(1.07);}
+  .gallery-item::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.75));
+    opacity:0;transition:opacity .3s ease;
+  }
+  .gallery-item:hover::after{opacity:1;}
   .gallery-caption{
-    position:absolute;left:14px;bottom:14px;font-size:13px;color:var(--paper);
+    position:absolute;left:14px;bottom:14px;right:14px;font-size:13px;color:var(--paper);
     text-shadow:0 1px 4px rgba(0,0,0,0.6);
+    opacity:0;transform:translateY(6px);transition:opacity .3s ease, transform .3s ease;
+    z-index:1;
   }
-  #members-cta{
-    text-align:center;padding-top:0;
-  }
-  #members-cta .wrap{max-width:560px;}
-  #members-cta h2{font-size:clamp(28px,3.6vw,38px);margin:12px 0 16px;}
-  #members-cta p{color:var(--fog);line-height:1.7;margin-bottom:28px;}
+  .gallery-item:hover .gallery-caption{opacity:1;transform:translateY(0);}
 
   .res-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;}
   @media(max-width:800px){.res-grid{grid-template-columns:1fr;gap:40px;}}
@@ -240,7 +338,7 @@
     footer{padding:60px 0 32px;}
     .foot-bottom{flex-direction:column;align-items:flex-start;gap:8px;}
   }
-  .contact-grid h3{font-size:13px;text-transform:uppercase;letter-spacing:0.1em;color:var(--fog);font-family:'Inter',sans-serif;font-weight:500;margin-bottom:14px;}
+  .contact-grid h3{font-size:13px;text-transform:uppercase;letter-spacing:0.1em;color:var(--fog);font-family:'Montserrat',sans-serif;font-weight:500;margin-bottom:14px;}
   .contact-grid p, .contact-grid a{font-size:14px;color:var(--paper);line-height:1.9;display:block;}
   .foot-bottom{
     display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
@@ -250,6 +348,11 @@
 </style>
 </head>
 <body>
+
+<div class="bg-ambient" aria-hidden="true">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+</div>
 
 <nav>
   <div class="nav-inner">
@@ -272,23 +375,96 @@
   <div class="wrap">
     <div class="hero-content">
       <img src="assets/wordmark.png?v=2" alt="" class="hero-wordmark">
-      <p class="eyebrow" data-sc="hero_eyebrow"></p>
-      <h1 data-sc="hero_heading"></h1>
-      <p data-sc="hero_description"></p>
-      <div class="btn-row">
-        <a href="signup.html" class="btn btn-primary"><span data-sc="hero_cta_primary">Get on the list</span></a>
-        <a href="#events" class="btn btn-outline"><span data-sc="hero_cta_secondary">See what's on</span></a>
+      <p class="eyebrow" data-sc="hero_eyebrow">Members Only · Philadelphia</p>
+      <h1 data-sc="hero_heading">Come <span>be seen</span>.</h1>
+      <p data-sc="hero_description">A room built for chemistry — low light, good company, and just enough temptation to talk to someone new.</p>
+      <div class="hero-divider"></div>
+      <div class="btn-row" style="margin-top:28px;">
+        <a href="https://members.voyeurnightclubphilly.com" data-sc-href="portal_url" class="btn btn-primary" target="_blank" rel="noopener"><span data-sc="hero_cta_primary">Members login</span></a>
+        <a href="#events" class="btn btn-outline"><span data-sc="hero_cta_secondary">See tonight's scene</span></a>
       </div>
     </div>
   </div>
 </section>
 
+<section id="allure">
+  <div class="wrap">
+    <div class="section-head reveal" style="margin:0 auto 48px;text-align:center;max-width:620px;">
+      <div class="ornament"><span></span></div>
+      <p class="eyebrow">The standard every other room in the city chases</p>
+      <h2 style="font-style:italic;">More than a night out.</h2>
+      <p>Every detail is built so a stranger becomes a conversation, and a conversation becomes something worth returning for.</p>
+    </div>
+    <div class="allure-grid">
+      <div class="allure-card glass reveal">
+        <div class="allure-icon"><img src="assets/eye-icon.png" alt="" style="width:20px;height:auto;"></div>
+        <h3>A room that notices you</h3>
+        <p>Curated crowds, flattering light, and a floor plan designed for eye contact — not just a dance floor.</p>
+      </div>
+      <div class="allure-card glass reveal">
+        <div class="allure-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+        </div>
+        <h3>Real chemistry, not small talk</h3>
+        <p>Members come for connection first — the kind of night where you leave with a number, not just a headache.</p>
+      </div>
+      <div class="allure-card glass reveal">
+        <div class="allure-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        </div>
+        <h3>Effortless discretion</h3>
+        <p>Members-only entry, private photo delivery, and a staff that knows when to look away. What happens here stays yours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="section-head reveal" style="margin:0 auto 60px;text-align:center;max-width:600px;">
+      <div class="ornament"><span></span></div>
+      <p class="eyebrow">How your night unfolds</p>
+      <h2 style="font-style:italic;">Four moments. One story.</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step reveal">
+        <span class="step-num">01</span>
+        <h3>Arrive</h3>
+        <p>Skip the line. Members walk straight in, coats checked, first drink poured.</p>
+      </div>
+      <div class="step reveal">
+        <span class="step-num">02</span>
+        <h3>Mingle</h3>
+        <p>A room curated so the person next to you is worth talking to.</p>
+      </div>
+      <div class="step reveal">
+        <span class="step-num">03</span>
+        <h3>Connect</h3>
+        <p>Low light, good music, no rush. The kind of night that turns into a conversation.</p>
+      </div>
+      <div class="step reveal">
+        <span class="step-num">04</span>
+        <h3>Stay</h3>
+        <p>Come back for the next one — the best nights have a way of turning into a next date.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="manifesto">
+  <div class="wrap">
+    <div class="ornament"><span></span></div>
+    <blockquote class="reveal">“You don't come here to be alone. You come here to be <span>found</span>.”</blockquote>
+    <cite data-sc="club_name"></cite>
+  </div>
+</section>
+
 <section id="events">
   <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">On the calendar</p>
-      <h2 data-sc="events_heading"></h2>
-      <p data-sc="events_blurb"></p>
+    <div class="section-head reveal">
+      <p class="eyebrow">Tonight &amp; beyond</p>
+      <h2 data-sc="events_heading">On the calendar</h2>
+      <p data-sc="events_blurb">The nights worth clearing your schedule for.</p>
     </div>
     <!-- Events are pulled live from the Events tab in the admin panel -->
     <div class="event-list" id="eventList">
@@ -299,10 +475,10 @@
 
 <section id="gallery">
   <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">Caught on camera</p>
-      <h2 data-sc="gallery_heading"></h2>
-      <p>A glimpse of past nights. Full resolution photos from your own night are on your members page.</p>
+    <div class="section-head reveal">
+      <p class="eyebrow">Caught in the act</p>
+      <h2 data-sc="gallery_heading">Caught on camera</h2>
+      <p>A glimpse inside. However many nights are yours — full resolution, waiting in your members page.</p>
     </div>
     <div class="gallery-grid" id="galleryGrid">
       <p style="color:var(--fog);font-size:14px;grid-column:1/-1;">Loading photos…</p>
@@ -310,12 +486,14 @@
   </div>
 </section>
 
-<section id="members-cta">
-  <div class="wrap">
-    <p class="eyebrow">Already one of us?</p>
-    <h2>See your night, in full.</h2>
-    <p>Log in to view and download your photos from any night you've been tagged in.</p>
-    <a href="#" data-sc-href="portal_url" class="btn btn-primary" target="_blank" rel="noopener"><span data-sc="members_cta_label">Members login</span></a>
+
+<section id="final-cta">
+  <div class="bloom bloom-1"></div>
+  <div class="bloom bloom-2"></div>
+  <div class="wrap reveal">
+    <div class="ornament"><span></span></div>
+    <p class="eyebrow">Philadelphia's most exclusive address</p>
+    <a href="signup.html" class="btn btn-primary">Sign up</a>
   </div>
 </section>
 
@@ -352,6 +530,19 @@
 </footer>
 
 <script>
+  /* --- Scroll reveal for .reveal elements (no-op if motion is reduced) --- */
+  if('IntersectionObserver' in window){
+    var revealObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('in');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(function(el){ revealObserver.observe(el); });
+  }
+
   var menuBtn = document.getElementById('menuBtn');
   var navLinks = document.getElementById('navLinks');
   menuBtn.addEventListener('click', function(){
@@ -440,7 +631,7 @@
       var title = (ev.title || '').replace(/</g, '&lt;');
       var detail = (ev.detail || '').replace(/</g, '&lt;');
       var cta = '<a href="signup.html" class="btn btn-outline">' + ctaLabel.replace(/</g, '&lt;') + '</a>';
-      return '<div class="event-row">' +
+      return '<div class="event-row glass">' +
                '<div class="event-date">' + day + ' <small>' + mon + '</small></div>' +
                '<div>' +
                  '<div class="event-title">' + title + '</div>' +
